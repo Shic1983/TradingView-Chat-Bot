@@ -1,3 +1,4 @@
 function TVBot () {
-  var csrftoken, sessionid; 
+  var username, csrftoken, sessionid; 
+  var owners = [];
 } 

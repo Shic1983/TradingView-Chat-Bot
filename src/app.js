@@ -17,4 +17,3 @@ var db = mysql.createConnection({
 });
 db.connect();
 var tvURL = "https://www.tradingview.com";
-

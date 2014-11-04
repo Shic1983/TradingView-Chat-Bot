@@ -1,5 +1,5 @@
 
-/*! TVBot - v0.1.0 - 2014-11-03
+/*! TVBot - v0.1.0 - 2014-11-04
 * http://...github url.../
 * Copyright (c) 2014 flibbr; Licensed MIT */
 
@@ -23,25 +23,53 @@ var db = mysql.createConnection({
 db.connect();
 var tvURL = "https://www.tradingview.com";
 
-
+TVBot.prototype.setOwners = function( arr ) { 
+	that = this;
+	that.owners = arr;	
+}
 // Matching !seen
 TVBot.prototype.seen = function( user ) { 
 	that = this;
 	var post  = { Username: user };
 	var query = db.query('SELECT * from ChatLog WHERE ? ORDER BY Timestamp DESC LIMIT 1', post, function(err, result) {
-		console.log(result);
-	 	if(result[0].Id) {
+		if (err) throw err;
+		if(result.length > 0) {
 	 		var msg = 'last seen '+result[0].Username+' '+timeago(new Date(result[0].Timestamp*1000))+', \''+result[0].Text+'\'';
 	 		console.log(msg);
 	 		that.sendMessage( msg );
-	 		that.sendMessage( "last seen zoinky 22 minutes ago, 'bitcoin's network is just too large, its counterproductive'" );
 	 	}
 	});	
 }
+// Matching !popular
+TVBot.prototype.busy = function( time ) { 
+	that = this;
+	var periods = {
+		'24h': 86400,
+		'12h': 43200,
+		'1h': 3600, 
+		'30m': 1800,
+		'5m': 300
+	}
+	if(periods[time]) {
+		var timestamp = unixTime(new Date()) - periods[time];
+		var query = db.query('SELECT Username, Count(*) as TotalPosts FROM ChatLog WHERE Timestamp > ? AND Username != ? GROUP BY Username ORDER BY TotalPosts DESC LIMIT 3', [timestamp,that.username], function(err, rows) {
+			if(err) throw err;
+			var msg = 'Busy chatters in the last '+time+'\n'; 
+			var total = rows.length; 
+			for (var i in rows) {
+				msg += rows[i].Username+': '+rows[i].TotalPosts;
+				if(i != total-1 ) msg += '\n';
+			}
+			that.sendMessage( msg );
+		});		
+	}
+}
 TVBot.prototype.login = function(username, password) { 
 	that = this;
+	that.username = username;
 
-	curl(tvURL+'/accounts/signin/', {
+	login_curl = curl.create()
+	login_curl(tvURL+'/accounts/signin/', {
 		POST: 1,
 		POSTFIELDS: "username="+username+"&password="+password
 	}, function(e) {
@@ -61,18 +89,20 @@ TVBot.prototype.login = function(username, password) {
 		
 		console.log('got connected.... ');	
 		that.watchChat();
-		
+		this.close();
 	});
 }
 TVBot.prototype.sendMessage = function( text ) {
 	that = this;
-	curl(tvURL+'/conversation-post/', {
+	sendmsg_curl = curl.create()
+	sendmsg_curl(tvURL+'/conversation-post/', {
 		POST: 1,
 		POSTFIELDS: "text="+encodeURIComponent(text)+"&room=bitcoin&symbol=FROM:Botland&meta={}",
 		COOKIE: "csrftoken="+that.csrftoken+";sessionid="+that.sessionid
 	}, function(e) {
 		console.log(e);
 		console.log(this.body);
+		this.close();
 	});	
 }
 TVBot.prototype.watchChat = function( ) {
@@ -103,8 +133,8 @@ TVBot.prototype.watchChat = function( ) {
 						});
 						
 						var letter = d.text.substring(0, 1);
-						words = [];
-						if(letter == '!' && (d.username == 'flibbr' || d.username == 'zoinky') ) { 
+						words = [];						
+						if(letter == '!' && (that.owners.indexOf(d.username) > 0) ) { 
 							  d.text.split(/\s+/).forEach(function(word) {
 								word = word.toLowerCase().replace(/\W+/g, '');
 								// if (~stopWords.indexOf(word) || !word) return;
@@ -118,6 +148,9 @@ TVBot.prototype.watchChat = function( ) {
 									case 'stats':
 										console.log('stats.');
 										break;
+									case 'busy':
+										that.busy( words[1] );
+										break;										
 								}
 						}
 					}
@@ -133,5 +166,6 @@ TVBot.prototype.watchChat = function( ) {
 
 }
 function TVBot () {
-  var csrftoken, sessionid; 
+  var username, csrftoken, sessionid; 
+  var owners = [];
 } 

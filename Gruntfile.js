@@ -2,7 +2,8 @@ module.exports = function(grunt) {
 	"use strict";
 
 	var fileArr = { 
-		core: ['src/*.js']
+		core: ['src/*.js'],
+		all: ['src/*.js', 'example/setup.js']
 	}
 	
 	// Configuration Goes here
@@ -17,6 +18,9 @@ module.exports = function(grunt) {
 		    options: { banner: '<%= banner %>' },
 			core:  { 
 				files: { 'build/<%= pkg.name %>.js': fileArr.core } 
+			},
+			example: { 
+				files: { 'example/run.js': ['build/TVBot.js','example/setup.js'] }	
 			}
 		},
 		uglify: {
@@ -33,10 +37,10 @@ module.exports = function(grunt) {
 				reload: true,
 				livereload: 1337
 			},
-			core: { 
-				files: fileArr.core,
-				tasks: ['concat:core', 'uglify:core'],
-			}
+			all: { 
+				files: fileArr.all,
+				tasks: ['concat:core', 'concat:example', 'uglify:core'],
+			},
 		}
 
 	});

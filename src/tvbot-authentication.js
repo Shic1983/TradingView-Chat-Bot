@@ -1,7 +1,9 @@
 TVBot.prototype.login = function(username, password) { 
 	that = this;
+	that.username = username;
 
-	curl(tvURL+'/accounts/signin/', {
+	login_curl = curl.create()
+	login_curl(tvURL+'/accounts/signin/', {
 		POST: 1,
 		POSTFIELDS: "username="+username+"&password="+password
 	}, function(e) {
@@ -21,6 +23,6 @@ TVBot.prototype.login = function(username, password) {
 		
 		console.log('got connected.... ');	
 		that.watchChat();
-		
+		this.close();
 	});
 }
