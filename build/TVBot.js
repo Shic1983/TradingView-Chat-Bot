@@ -140,7 +140,6 @@ TVBot.prototype.watchChat = function( ) {
 								// if (~stopWords.indexOf(word) || !word) return;
 								words.push(word);
 							  });
-							  console.log(words);
 							  switch(words[0]) {
 									case 'seen':
 										that.seen( words[1] );
@@ -155,7 +154,7 @@ TVBot.prototype.watchChat = function( ) {
 						}
 					}
 				} catch(err) { 
-					console.log(msg);	
+					// Error 
 				}
 				// console.log("Received: '" + message.utf8Data + "'");
 			}

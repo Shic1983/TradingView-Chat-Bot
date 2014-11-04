@@ -145,7 +145,6 @@ TVBot.prototype.watchChat = function( ) {
 								// if (~stopWords.indexOf(word) || !word) return;
 								words.push(word);
 							  });
-							  console.log(words);
 							  switch(words[0]) {
 									case 'seen':
 										that.seen( words[1] );
@@ -160,7 +159,7 @@ TVBot.prototype.watchChat = function( ) {
 						}
 					}
 				} catch(err) { 
-					console.log(msg);	
+					// Error 
 				}
 				// console.log("Received: '" + message.utf8Data + "'");
 			}
@@ -178,7 +177,7 @@ function TVBot () {
 // Run the bot
 var username = '';
 var password = '';
-var friends = ['zoinky','flibbr','Legion'];
+var friends = ['username1','username2'];
 
 var bot = new TVBot();
 bot.setOwners( friends );

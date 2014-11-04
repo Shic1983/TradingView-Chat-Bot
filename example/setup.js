@@ -1,7 +1,7 @@
 // Run the bot
 var username = '';
 var password = '';
-var friends = ['zoinky','flibbr','Legion'];
+var friends = ['username1','username2'];
 
 var bot = new TVBot();
 bot.setOwners( friends );
