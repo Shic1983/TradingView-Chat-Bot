@@ -16,8 +16,14 @@ Datbase: TVChatBot
 ## Run the ChatBot
 Edit the TVBot.js or TVBot.min.js and at the bottom put the code;  
 ```
+// Run the bot
+var username = '';
+var password = '';
+var friends = ['username1','username2'];
+
 var bot = new TVBot();
-bot.login( 'username', 'password' );
+bot.setOwners( friends );
+bot.login( username, password );
 ```
 
 ## Features
