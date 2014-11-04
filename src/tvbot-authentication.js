@@ -21,7 +21,7 @@ TVBot.prototype.login = function(username, password) {
 		that.csrftoken = qparams.csrftoken.substring(0, qparams.csrftoken.length - 1);
 		that.sessionid = qparams.sessionid.substring(0, qparams.sessionid.length - 1);
 		
-		console.log('got connected.... ');	
+		console.log('logged in.... ');	
 		that.watchChat();
 		this.close();
 	});

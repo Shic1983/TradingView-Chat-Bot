@@ -6,8 +6,6 @@ TVBot.prototype.sendMessage = function( text ) {
 		POSTFIELDS: "text="+encodeURIComponent(text)+"&room=bitcoin&symbol=FROM:Botland&meta={}",
 		COOKIE: "csrftoken="+that.csrftoken+";sessionid="+that.sessionid
 	}, function(e) {
-		console.log(e);
-		console.log(this.body);
 		this.close();
 	});	
 }
