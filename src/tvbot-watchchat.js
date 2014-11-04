@@ -42,6 +42,9 @@ TVBot.prototype.watchChat = function( ) {
 										break;
 									case 'busy':
 										that.busy( words[1] );
+										break;
+									case 'sentiment':
+										that.sentiment( words[1] );
 										break;										
 								}
 						}
