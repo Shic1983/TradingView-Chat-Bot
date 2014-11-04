@@ -35,7 +35,7 @@ TVBot.prototype.setOwners = function( arr ) {
 // Matching !seen
 TVBot.prototype.seen = function( user ) { 
 	that = this;
-	var post  = { Username: user };
+	var post  = { Username: db.escape(user) };
 	var query = db.query('SELECT * from ChatLog WHERE ? ORDER BY Timestamp DESC LIMIT 1', post, function(err, result) {
 		if (err) throw err;
 		if(result.length > 0) {
@@ -85,8 +85,24 @@ TVBot.prototype.sentiment = function( time ) {
 				that.sendMessage( msg );
 			});		
 		});	
-		
 	}
+}
+// MAtching !slap <user>
+TVBot.prototype.slap = function( slapper, victim ) {
+	that = this;
+	msg = slapper+" slaps "+victim+" around a bit with a large trout";
+	that.sendMessage( msg );
+}
+// Matching !quote <user>
+TVBot.prototype.quote = function( user ) { 
+	that = this;
+	var q = db.query("SELECT Username, Text from ChatLog WHERE CHAR_LENGTH(Text) >= 3 AND CHAR_LENGTH(Text) <= 200 AND Username=? LIMIT 1", [db.escape(user)], function(err, rows) {
+		if(err) throw err;
+		if(rows.length > 0) {
+			var msg = rows[0]['Username']+': "'+rows[0]['Text']; 
+			that.sendMessage( msg );
+		}
+	});	
 }
 TVBot.prototype.login = function(username, password) { 
 	that = this;
@@ -156,7 +172,7 @@ TVBot.prototype.watchChat = function( ) {
 						
 						var letter = d.text.substring(0, 1);
 						words = [];						
-						if(letter == '!' && (that.owners.indexOf(d.username) > 0) ) { 
+						if(letter == '!' && (that.owners.indexOf(d.username) > -1) ) { 
 							  d.text.split(/\s+/).forEach(function(word) {
 								word = word.toLowerCase().replace(/\W+/g, '');
 								// if (~stopWords.indexOf(word) || !word) return;
@@ -174,7 +190,13 @@ TVBot.prototype.watchChat = function( ) {
 										break;
 									case 'sentiment':
 										that.sentiment( words[1] );
-										break;										
+										break;
+									case 'slap':
+										that.slap( d.username, words[1] );
+										break;	
+									case 'quote':
+										that.quote( words[1] );
+										break;
 								}
 						}
 					}

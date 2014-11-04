@@ -32,6 +32,15 @@ Lets u know when a username was last seen, could also add in what their last sen
 
 ``!busy <timeperiod>``
 Brings up some stats about who's been busy chatting in the chatbox for set period of time
+
+``!sentiment <timeperiod>``
+Brings up the bull/bear % ratio sentiment index for given time period.
+
+``!slap <user>``
+Slaps users with a trout
+
+``!quote <user>``
+Geta quote for given user
   
 ## Ideas
 ``!sentiment <timeperiod>``

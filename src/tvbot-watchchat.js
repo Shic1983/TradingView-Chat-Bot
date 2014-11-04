@@ -27,7 +27,7 @@ TVBot.prototype.watchChat = function( ) {
 						
 						var letter = d.text.substring(0, 1);
 						words = [];						
-						if(letter == '!' && (that.owners.indexOf(d.username) > 0) ) { 
+						if(letter == '!' && (that.owners.indexOf(d.username) > -1) ) { 
 							  d.text.split(/\s+/).forEach(function(word) {
 								word = word.toLowerCase().replace(/\W+/g, '');
 								// if (~stopWords.indexOf(word) || !word) return;
@@ -45,7 +45,13 @@ TVBot.prototype.watchChat = function( ) {
 										break;
 									case 'sentiment':
 										that.sentiment( words[1] );
-										break;										
+										break;
+									case 'slap':
+										that.slap( d.username, words[1] );
+										break;	
+									case 'quote':
+										that.quote( words[1] );
+										break;
 								}
 						}
 					}
