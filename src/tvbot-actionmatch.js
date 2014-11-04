@@ -1,15 +1,15 @@
 // Matching !seen
 TVBot.prototype.seen = function( user ) { 
 	that = this;
-	var post  = { Username: db.escape(user) };
-	var query = db.query('SELECT * from ChatLog WHERE ? ORDER BY Timestamp DESC LIMIT 1', post, function(err, result) {
+	var query = db.query('SELECT * from ChatLog WHERE Username='+db.escape(user)+' ORDER BY Timestamp DESC LIMIT 1', [], function(err, result) {
 		if (err) throw err;
 		if(result.length > 0) {
 	 		var msg = 'last seen '+result[0].Username+' '+timeago(new Date(result[0].Timestamp*1000))+', \''+result[0].Text+'\'';
 	 		that.sendMessage( msg );
+	 		if(that.debug==1) console.log('DEBUG, SendingMsg: '+msg);
 	 	}
 	});	
-	console.log(query.sql);
+	 if(that.debug==1) console.log('DEBUG, Query: '+query.sql);
 }
 // Matching !popular <timeperiod>
 TVBot.prototype.busy = function( time ) { 
@@ -26,7 +26,9 @@ TVBot.prototype.busy = function( time ) {
 				if(i != total-1 ) msg += '\n';
 			}
 			that.sendMessage( msg );
-		});		
+	 		if(that.debug==1) console.log('DEBUG, SendingMsg: '+msg);
+		});	
+	 	if(that.debug==1) console.log('DEBUG, Query: '+query.sql);	
 	}
 }
 // MAtching !sentiment <timepeiord>
@@ -45,10 +47,10 @@ TVBot.prototype.sentiment = function( time ) {
 				if(err) throw err;
 				sums.bears = sums.bears+rows[0].Total;
 				sums.total = (sums.bulls+sums.bears);
-				console.log(sums);
 				msg = time+" sentiment index: Bulls: "+Math.round((sums.bulls/sums.total)*100)+"%, Bears: "+Math.round((sums.bears/sums.total)*100)+"%";
 				
 				that.sendMessage( msg );
+				if(that.debug==1) console.log('DEBUG, SendingMsg: '+msg);
 			});		
 		});	
 	}
@@ -58,15 +60,18 @@ TVBot.prototype.slap = function( slapper, victim ) {
 	that = this;
 	msg = slapper+" slaps "+victim+" around a bit with a large trout";
 	that.sendMessage( msg );
+	if(that.debug==1) console.log('DEBUG, SendingMsg: '+msg);
 }
 // Matching !quote <user>
 TVBot.prototype.quote = function( user ) { 
 	that = this;
-	var q = db.query("SELECT Username, Text from ChatLog WHERE CHAR_LENGTH(Text) >= 3 AND CHAR_LENGTH(Text) <= 200 AND Username=? LIMIT 1", [db.escape(user)], function(err, rows) {
+	var query = db.query("SELECT Username, Text from ChatLog WHERE CHAR_LENGTH(Text) >= 3 AND CHAR_LENGTH(Text) <= 200 AND Username="+db.escape(user)+" LIMIT 1", [], function(err, rows) {
 		if(err) throw err;
 		if(rows.length > 0) {
 			var msg = rows[0]['Username']+': "'+rows[0]['Text']; 
 			that.sendMessage( msg );
+	 		if(that.debug==1) console.log('DEBUG, SendingMsg: '+msg);
 		}
 	});	
+	if(that.debug==1) console.log('DEBUG, Query: '+query.sql);
 }

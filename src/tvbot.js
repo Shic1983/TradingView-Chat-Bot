@@ -1,5 +1,5 @@
 function TVBot () {
-  var username, csrftoken, sessionid; 
+  var username, csrftoken, sessionid, debug; 
   var owners = [];
   var periods = {};
   this.init();
@@ -12,4 +12,7 @@ TVBot.prototype.init = function() {
 	'30m': 1800,
 	'5m': 300
     }	
+}
+TVBot.prototype.setDebug = function( bool ) { 
+	this.debug = bool;	
 }
